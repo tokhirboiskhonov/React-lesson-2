@@ -3,12 +3,16 @@ import './App.scss';
 import Todo from './Components/Todo-list/Todo'
 
 function App() {
-  const [todos, setTodos] = React.useState([]);
+  const [todos, setTodos] = React.useState(JSON.parse(window.localStorage.getItem('todos')) || []);
+
+  const [type, setType] = React.useState('all')
   
   const handleDelete = (e)=>{
     const todoId = Number(e.target.dataset.todoId);
     
     const filteredTodos = todos.filter((todo) => todo.id !== todoId);
+
+    window.localStorage.setItem('todos', JSON.stringify(filteredTodos));
     
     setTodos(filteredTodos);
   }
@@ -19,16 +23,39 @@ function App() {
     const foundTodo = todos.find((todo)=> todo.id === todoId);
     
     foundTodo.isCompleted = !foundTodo.isCompleted;
-    
+
+    window.localStorage.setItem('todos', JSON.stringify([...todos]));
+
     setTodos([...todos])
   };
   
+  const getTodosByType = (_type, _todos) =>{
+
+    if(_type === 'all'){
+      return _todos;
+    }
+
+    if(_type === 'completed'){
+      return _todos.filter((t) => t.isCompleted)
+    }
+
+    if(_type === 'uncompleted'){
+
+      return _todos.filter((t) => !t.isCompleted)
+    }
+
+    else{
+      return []
+    }
+  }
+
   return (
     <>
     <div className="container">
     
     <main className="main">
-    <h1 className='todos__title'>todos</h1>
+      <h1 className='todos__title'>todos</h1>
+
     <input 
     className='todo__input'
     type="text"
@@ -39,17 +66,19 @@ function App() {
           title: evt.target.value.trim(),
           isCompleted: false
         };
-        
+
+        window.localStorage.setItem('todos', JSON.stringify([...todos, newTodo]));
+
         setTodos([...todos, newTodo])
         
         evt.target.value = "";
       }
     }} 
     />
-    
+
     <ul className="todos">
-    {todos.length > 0 && 
-      todos.map((todo)=>(
+    {todos.length > 0 &&
+      getTodosByType(type, todos).map((todo)=>(
         <Todo 
         key={todo.id}
         todo={todo} 
@@ -59,13 +88,13 @@ function App() {
         </Todo>
         ))}
         </ul>
+
+
         <div className="box">
-        <h3 className='items__heading'>0 items left</h3>
         
-        
-        <button className='btn'>All</button>
-        <button className='btn'>Active</button>
-        <button className='btn'>Completed</button>
+        <button className='btn' onClick={()=>setType('all')}>all</button>
+        <button className='btn' onClick={()=>setType('completed')}>completed</button>
+        <button className='btn' onClick={()=>setType('uncompleted')}>uncompleted</button>
         </div>
         </main>
         </div>

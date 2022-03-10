@@ -97,7 +97,7 @@ h1, h2, h3, h4, h5, h6 {
 .box {
     display: flex;
     align-items: center;
-    margin-left: calc(38%)
+    margin-left: calc(33.5%)
 }
 
 button{
@@ -113,7 +113,9 @@ button{
 button:hover{
     background-color: red;
 }
-
+.btn{
+    margin-top: 15px;
+}
 .btn:hover{
     color: #000;
     background-color: wheat;
